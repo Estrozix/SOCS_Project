@@ -15,6 +15,8 @@ clear,clc,clf
 % vacination rate, vaccination program, vaccination positivity 
 % vaccine decay  rate
 % vaccination percentage variable
+% animation ? (store position as function of time)
+
 
 time = 3000;
 [S, I, R, D, V] = simulateSIR(0.8,0.01,0.7,0.005,0,0.001,time);

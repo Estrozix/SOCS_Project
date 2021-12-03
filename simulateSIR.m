@@ -14,7 +14,7 @@ population = zeros(individuals,4); % store (status,pos_x,pos_y,linear_index)
 % 2 = infected
 % 3 = recovered
 % 4 = dead
-population(:,2:3) = randi(latticeN,individuals,2);
+population(:,2:3) = randi([0,latticeN],individuals,2);
 population(:,1) = 1;
 population(1:initial_infected_no,1) = 2;
 

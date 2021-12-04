@@ -1,21 +1,34 @@
 % runs at most end_time iterations. if end_time=0, only stop when disease is dead.
-function [S, I, R, D, V] = simulateSIR(beta,gamma,d,mu,alpha,sigma,end_time)
-
+function [S, I, R, D, V] = simulateSIR(options)
+arguments
+    options.latticeN double = 100
+    options.individuals double = 1000
+    options.beta (1,1) double
+    options.gamma (1,1) double
+    options.d (1,1) double
+    options.mu (1,1) double
+    options.alpha_nat (1,1) double
+    options.alpha_vacc (1,1) double
+    options.sigma (1,1) double
+    options.end_time (1,1) double
+end
+%beta,gamma,d,mu,alpha,sigma,end_time
 % Simulation Parameters
-latticeN = 100;
-individuals = 1000;
+latticeN = options.latticeN;
+individuals = options.individuals;
 initial_infected_no = round(0.01*individuals);
-move_probability = d;
-recovery_rate = gamma;
-infect_rate = beta;
-mortality_rate = mu;
-deimmunization_rate = alpha;
-vaccination_rate = sigma;
-
+move_probability = options.d;
+recovery_rate = options.gamma;
+infect_rate = options.beta;
+mortality_rate = options.mu;
+deimmunization_rate = options.alpha_nat;
+vaccination_rate = options.sigma;
+vacc_deimmun_rate = options.alpha_vacc; % idk
+end_time = options.end_time;
 
 % Initialize population
 % store (status,pos_x,pos_y,linear_index,vaccination time)
-population = zeros(individuals,5); 
+population = zeros(individuals,5);
 % 1 = susceptible
 % 2 = infected
 % 3 = recovered
@@ -73,7 +86,9 @@ while t ~= end_time % don't stop if end_time == 0
 
     % deimmunization
     deimmun_condition = (rand(individuals,1) < deimmunization_rate & population(:,1) == 3);
-    population(deimmun_condition,1) = 1;
+    vacc_deimmun_condition = (rand(individuals,1) < vacc_deimmun_rate & population(:,1) == 5);
+    population(deimmun_condition | vacc_deimmun_condition,1) = 1;
+    
     
     % Update data
     t = t + 1;

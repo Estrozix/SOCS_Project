@@ -1,6 +1,6 @@
 % Main 
 
-clear,clc,clf
+clear, clc, clf, close all
 
 % TODO:
 
@@ -28,8 +28,10 @@ time = 3000;
     alpha_vacc = 0.01, ...
     sigma = 0.001, ...
     end_time = time, ...
-    vacc_interval = 100);
+    vacc_interval = 100,...
+    show_scatter = false);
 
+figure
 plot(1:time,S)
 hold on
 plot(1:time,I)

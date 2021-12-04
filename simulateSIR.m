@@ -74,7 +74,7 @@ while t ~= end_time % don't stop if end_time == 0
     end
 
     % vaccinate step
-    vaccination_condition =  (rand(individuals,1) < vaccination_rate & population(:,1) == 1 & (t - population(:, 5)) > vacc_interval);
+    vaccination_condition =  (rand(individuals,1) < vaccination_rate & population(:,1) == 1 & ((t - population(:, 5)) > vacc_interval) | population(:, 5) == 0);
     population(vaccination_condition,1) = 5;
     population(vaccination_condition,5) = t;
 

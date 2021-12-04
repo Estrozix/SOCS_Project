@@ -12,6 +12,7 @@ arguments
     options.sigma (1,1) double
     options.end_time (1,1) double
     options.vacc_interval (1, 1) double
+    options.inc_factor (1, 1) double
 end
 %beta,gamma,d,mu,alpha,sigma,end_time
 % Simulation Parameters
@@ -27,6 +28,7 @@ vaccination_rate = options.sigma;
 vacc_deimmun_rate = options.alpha_vacc; % idk
 end_time = options.end_time;
 vacc_interval = options.vacc_interval;
+inc_factor = options.inc_factor;
 
 % Initialize population
 % store (status,pos_x,pos_y,linear_index,vaccination time)
@@ -69,9 +71,13 @@ while t ~= end_time % don't stop if end_time == 0
     for i = 1:length(infected)
         if rand < infect_rate
             local_sus = population(:,1) == Status.S & population(:,4) == population(infected(i),4);
-            population(local_sus,1) = Status.I;
+            population(local_sus,1) = Status.E;
         end
     end
+
+    % exposed step
+    exposed_condition = (rand(individuals, 1) < inc_factor & population(:, 1) == Status.E);
+    population(exposed_condition, 1) = Status.I;
 
     % vaccinate step
     vaccination_condition =  (rand(individuals,1) < vaccination_rate & population(:,1) == Status.S & (((t - population(:, 5)) > vacc_interval) | population(:, 5) == 0));

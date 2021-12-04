@@ -13,6 +13,7 @@ arguments
     options.end_time (1,1) double
     options.vacc_interval (1, 1) double
     options.inc_factor (1, 1) double
+    options.show_scatter
 end
 %beta,gamma,d,mu,alpha,sigma,end_time
 % Simulation Parameters
@@ -29,6 +30,7 @@ vacc_deimmun_rate = options.alpha_vacc; % idk
 end_time = options.end_time;
 vacc_interval = options.vacc_interval;
 inc_factor = options.inc_factor;
+show_scatter = options.show_scatter;
 
 % Initialize population
 % store (status,pos_x,pos_y,linear_index,vaccination time)

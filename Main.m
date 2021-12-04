@@ -1,6 +1,6 @@
 % Main 
 
-clear, clc, clf, close all
+clear, clc, clf, close 
 
 % TODO:
 
@@ -29,7 +29,7 @@ time = 3000;
     sigma = 0.001, ...
     end_time = time, ...
     vacc_interval = 100, ...
-    inc_factor = 0.1,
+    inc_factor = 0.1, ...
     show_scatter = false);
 
 figure

@@ -11,6 +11,7 @@ arguments
     options.alpha_vacc (1,1) double
     options.sigma (1,1) double
     options.end_time (1,1) double
+    options.vacc_interval (1, 1) double
 end
 %beta,gamma,d,mu,alpha,sigma,end_time
 % Simulation Parameters
@@ -25,6 +26,7 @@ deimmunization_rate = options.alpha_nat;
 vaccination_rate = options.sigma;
 vacc_deimmun_rate = options.alpha_vacc; % idk
 end_time = options.end_time;
+vacc_interval = options.vacc_interval;
 
 % Initialize population
 % store (status,pos_x,pos_y,linear_index,vaccination time)
@@ -37,6 +39,7 @@ population = zeros(individuals,5);
 population(:,2:3) = randi([0,latticeN],individuals,2);
 population(:,1) = 1;
 population(1:initial_infected_no,1) = 2;
+population(:, 5) = 0;
 
 
 % Initialize data
@@ -71,7 +74,7 @@ while t ~= end_time % don't stop if end_time == 0
     end
 
     % vaccinate step
-    vaccination_condition =  (rand(individuals,1) < vaccination_rate & population(:,1) == 1);
+    vaccination_condition =  (rand(individuals,1) < vaccination_rate & population(:,1) == 1 & ((t - population(:, 5)) > vacc_interval) | population(:, 5) == 0);
     population(vaccination_condition,1) = 5;
     population(vaccination_condition,5) = t;
 

@@ -37,8 +37,8 @@ population = zeros(individuals,5);
 % 4 = dead
 % 5 = vaccinated (immune)
 population(:,2:3) = randi([0,latticeN],individuals,2);
-population(:,1) = 1;
-population(1:initial_infected_no,1) = 2;
+population(:,1) = Status.S;
+population(1:initial_infected_no,1) = Status.I;
 population(:, 5) = 0;
 
 
@@ -65,41 +65,41 @@ while t ~= end_time % don't stop if end_time == 0
     population(:,4) = population(:,2) + population(:,3)*latticeN;
 
     % infection step, almost certainly most of the computation time
-    infected = find(population(:,1) == 2);
+    infected = find(population(:,1) == Status.I);
     for i = 1:length(infected)
         if rand < infect_rate
-            local_sus = population(:,1) == 1 & population(:,4) == population(infected(i),4);
-            population(local_sus,1) = 2;
+            local_sus = population(:,1) == Status.S & population(:,4) == population(infected(i),4);
+            population(local_sus,1) = Status.I;
         end
     end
 
     % vaccinate step
-    vaccination_condition =  (rand(individuals,1) < vaccination_rate & population(:,1) == 1 & ((t - population(:, 5)) > vacc_interval) | population(:, 5) == 0);
-    population(vaccination_condition,1) = 5;
+    vaccination_condition =  (rand(individuals,1) < vaccination_rate & population(:,1) == Status.S & ((t - population(:, 5)) > vacc_interval) | population(:, 5) == 0);
+    population(vaccination_condition,1) = Status.V;
     population(vaccination_condition,5) = t;
 
 
     % recovery step
-    recover_condition = (rand(individuals,1) < recovery_rate & population(:,1) == 2);
-    population(recover_condition,1) = 3;
+    recover_condition = (rand(individuals,1) < recovery_rate & population(:,1) == Status.I);
+    population(recover_condition,1) = Status.R;
 
     % death step
-    death_condition = (rand(individuals,1) < mortality_rate & population(:,1) == 2);
-    population(death_condition,1) = 4;
+    death_condition = (rand(individuals,1) < mortality_rate & population(:,1) == Status.I);
+    population(death_condition,1) = Status.D;
 
     % deimmunization
-    deimmun_condition = (rand(individuals,1) < deimmunization_rate & population(:,1) == 3);
-    vacc_deimmun_condition = (rand(individuals,1) < vacc_deimmun_rate & population(:,1) == 5);
-    population(deimmun_condition | vacc_deimmun_condition,1) = 1;
+    deimmun_condition = (rand(individuals,1) < deimmunization_rate & population(:,1) == Status.R);
+    vacc_deimmun_condition = (rand(individuals,1) < vacc_deimmun_rate & population(:,1) == Status.V);
+    population(deimmun_condition | vacc_deimmun_condition,1) = Status.S;
     
     
     % Update data
     t = t + 1;
-    S(t) = sum(population(:,1) == 1);
-    I(t) = sum(population(:,1) == 2);
-    R(t) = sum(population(:,1) == 3);
-    D(t) = sum(population(:,1) == 4);
-    V(t) = sum(population(:,1) == 5);
+    S(t) = sum(population(:,1) == Status.S);
+    I(t) = sum(population(:,1) == Status.I);
+    R(t) = sum(population(:,1) == Status.R);
+    D(t) = sum(population(:,1) == Status.D);
+    V(t) = sum(population(:,1) == Status.V);
     % check for disease extinction
     if I(t) == 0
         if end_time > 0

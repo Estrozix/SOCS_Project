@@ -83,8 +83,7 @@ while t ~= end_time % don't stop if end_time == 0
     vaccination_condition =  (rand(individuals,1) < vaccination_rate & population(:,1) == Status.S & (((t - population(:, 5)) > vacc_interval) | population(:, 5) == 0));
     population(vaccination_condition,1) = Status.V;
     population(vaccination_condition,5) = t;
-
-
+    
     % recovery step
     recover_condition = (rand(individuals,1) < recovery_rate & population(:,1) == Status.I);
     population(recover_condition,1) = Status.R;
@@ -97,8 +96,7 @@ while t ~= end_time % don't stop if end_time == 0
     deimmun_condition = (rand(individuals,1) < deimmunization_rate & population(:,1) == Status.R);
     vacc_deimmun_condition = (rand(individuals,1) < vacc_deimmun_rate & population(:,1) == Status.V);
     population(deimmun_condition | vacc_deimmun_condition,1) = Status.S;
-    
-    
+
     % Update data
     t = t + 1;
     S(t) = sum(population(:,1) == Status.S);
@@ -117,6 +115,12 @@ while t ~= end_time % don't stop if end_time == 0
         end
         break;
     end
+
+    if show_scatter
+        scatter(population(:, 2), population(:, 3), 10, population(:,1), "filled")
+        pause(0.001)
+    end
+
 end % end while
 
 end % end function

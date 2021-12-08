@@ -58,6 +58,7 @@ S(1) = individuals-initial_infected_no;
 
 % Main simulation
 t = 1;
+infection_time = 0;
 while t ~= end_time % don't stop if end_time == 0
     % move step
     will_move = rand(individuals,1) < move_probability;
@@ -69,6 +70,7 @@ while t ~= end_time % don't stop if end_time == 0
     population(:,4) = population(:,2) + population(:,3)*latticeN;
 
     % infection step, almost certainly most of the computation time
+    starttime = tic;
     infected = find(population(:,1) == Status.I);
     for i = 1:length(infected)
         if rand < infect_rate
@@ -76,6 +78,7 @@ while t ~= end_time % don't stop if end_time == 0
             population(local_sus,1) = Status.E;
         end
     end
+    infection_time = infection_time + toc(starttime);
 
     % exposed step
     exposed_condition = (rand(individuals, 1) < inc_factor & population(:, 1) == Status.E);
@@ -124,5 +127,5 @@ while t ~= end_time % don't stop if end_time == 0
     end
 
 end % end while
-
+fprintf('Infection runtime: %.3f seconds\n', infection_time);
 end % end function

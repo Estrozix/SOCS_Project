@@ -14,7 +14,7 @@ clear, clc, clf, close
 % add age property
 % vacination rate, vaccination program, vaccination positivity 
 % vaccine decay  rate
-% vaccination percentage variable
+% vaccination percentage iable
 % animation ? (store position as function of time)
 
 

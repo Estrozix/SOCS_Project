@@ -34,16 +34,26 @@ show_scatter = options.show_scatter;
 
 % Initialize population
 % store (status,pos_x,pos_y,linear_index,vaccination time)
-population = zeros(individuals,5);
 % 1 = susceptible
 % 2 = infected
 % 3 = recovered
 % 4 = dead
 % 5 = vaccinated (immune)
-population(:,2:3) = randi([0,latticeN],individuals,2);
+population = zeros(individuals,5);
 population(:,1) = Status.S;
 population(1:initial_infected_no,1) = Status.I;
+population(:,2:3) = randi([1,latticeN],individuals,2);
+population(:,4) = population(:,2) + (population(:,3)-1)*latticeN;
 population(:, 5) = 0;
+
+
+% initialize lattice tensor
+latticeMatrix = zeros(latticeN^2,10);
+for i = 1:individuals
+    lindex = population(i,4);
+    freeSlot = find(latticeMatrix(lindex,:) == 0,1);
+    latticeMatrix(lindex,freeSlot) = i;
+end
 
 
 % Initialize data
@@ -60,25 +70,62 @@ S(1) = individuals-initial_infected_no;
 t = 1;
 infection_time = 0;
 while t ~= end_time % don't stop if end_time == 0
+
     % move step
     will_move = rand(individuals,1) < move_probability;
     directions = [+1,0; -1,0; 0,+1; 0,-1];
     chosen_directions = directions(randi(4,individuals,1),:);
+    temporaryLindex = population(:,4);
     population(:,2) = population(:,2) + will_move.*chosen_directions(:,1);
     population(:,3) = population(:,3) + will_move.*chosen_directions(:,2);
-    population(:,2:3) = mod(population(:,2:3), latticeN);
-    population(:,4) = population(:,2) + population(:,3)*latticeN;
+    population(:,2:3) = mod(population(:,2:3)-1, latticeN)+1;
+    population(:,4) = population(:,2) + (population(:,3)-1)*latticeN;
+
+
+    for i = 1:individuals  % update latticeMatrix
+        if will_move(i)
+
+            % remove their previous step
+            tempLindex = temporaryLindex(i);
+            removeIndex = find(latticeMatrix(tempLindex,:) == i,1);
+            latticeMatrix(tempLindex,removeIndex) = 0;
+
+            % add their new position
+            lindex = population(i,4);
+            freeSlot = find(latticeMatrix(lindex,:) == 0,1);
+            latticeMatrix(lindex,freeSlot) = i;
+        end
+    end
+
+
 
     % infection step, almost certainly most of the computation time
+    %     starttime = tic;
+    %     infected = find(population(:,1) == Status.I);
+    %     for i = 1:length(infected)
+    %         if rand < infect_rate
+    %             local_sus = population(:,1) == Status.S & population(:,4) == population(infected(i),4);
+    %             population(local_sus,1) = Status.E;
+    %         end
+    %     end
+    %     infection_time = infection_time + toc(starttime);
+
+
+    % improved infection step
     starttime = tic;
     infected = find(population(:,1) == Status.I);
     for i = 1:length(infected)
         if rand < infect_rate
-            local_sus = population(:,1) == Status.S & population(:,4) == population(infected(i),4);
+            q = infected(i);
+            lindexInfected = population(q,4);
+            local_indices = nonzeros(latticeMatrix(lindexInfected,:));
+            local_sus = population(local_indices,1) == Status.S;
             population(local_sus,1) = Status.E;
         end
     end
     infection_time = infection_time + toc(starttime);
+
+
 
     % exposed step
     exposed_condition = (rand(individuals, 1) < inc_factor & population(:, 1) == Status.E);
@@ -88,7 +135,7 @@ while t ~= end_time % don't stop if end_time == 0
     vaccination_condition =  (rand(individuals,1) < vaccination_rate & population(:,1) == Status.S & (((t - population(:, 5)) > vacc_interval) | population(:, 5) == 0));
     population(vaccination_condition,1) = Status.V;
     population(vaccination_condition,5) = t;
-    
+
     % recovery step
     recover_condition = (rand(individuals,1) < recovery_rate & population(:,1) == Status.I);
     population(recover_condition,1) = Status.R;
@@ -123,7 +170,7 @@ while t ~= end_time % don't stop if end_time == 0
 
     if show_scatter
         scatter(population(:, 2), population(:, 3), 10, population(:,1), "filled")
-        pause(0.001)
+        pause(0.05)
     end
 
 end % end while

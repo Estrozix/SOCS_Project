@@ -3,6 +3,7 @@
 clear, clc, clf, close 
 
 % TODO:
+% I hate Bruse
 
 % vaccinated status
 % move probability depends on illness

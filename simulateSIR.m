@@ -14,6 +14,7 @@ arguments
     options.vacc_interval (1, 1) double
     options.inc_factor (1, 1) double
     options.show_scatter
+    options.time_delay
 end
 %beta,gamma,d,mu,alpha,sigma,end_time
 % Simulation Parameters
@@ -31,6 +32,7 @@ end_time = options.end_time;
 vacc_interval = options.vacc_interval;
 inc_factor = options.inc_factor;
 show_scatter = options.show_scatter;
+time_delay = options.time_delay;
 
 % Initialize population
 % store (status,pos_x,pos_y,linear_index,vaccination time)
@@ -101,7 +103,6 @@ while t ~= end_time % don't stop if end_time == 0
     deimmun_condition = (rand(individuals,1) < deimmunization_rate & population(:,1) == Status.R);
     vacc_deimmun_condition = (rand(individuals,1) < vacc_deimmun_rate & population(:,1) == Status.V);
     population(deimmun_condition | vacc_deimmun_condition,1) = Status.S;
-
     % Update data
     t = t + 1;
     S(t) = sum(population(:,1) == Status.S);
@@ -120,12 +121,26 @@ while t ~= end_time % don't stop if end_time == 0
         end
         break;
     end
-
     if show_scatter
-        scatter(population(:, 2), population(:, 3), 10, population(:,1), "filled")
-        pause(0.001)
-    end
+        suceptible_index = find(population(:,1) == 0);
+        exposed_index = find(population(:,1) == 1);
+        infected_index = find(population(:,1) == 2);
+        recovered_index = find(population(:,1) == 3);
+        dead_index = find(population(:,1) == 4);
+        vaccinated_index = find(population(:,1) == 5);
 
+        scatter(population(suceptible_index, 2), population(suceptible_index, 3), 15, [0.3010 0.7450 0.9330], "filled");
+        hold on
+        scatter(population(exposed_index, 2), population(exposed_index, 3), 15, [0.8500 0.3250 0.0980], "filled");
+        scatter(population(infected_index, 2), population(infected_index, 3), 15, "red", "filled");
+        scatter(population(recovered_index, 2), population(recovered_index, 3), 15, "magenta", "filled");
+        scatter(population(dead_index, 2), population(dead_index, 3), 15, "black", "filled");
+        scatter(population(vaccinated_index, 2), population(vaccinated_index, 3), 15, "blue", "filled");
+        hold off
+        legend("suceptible","exposed","infected","recovered","dead","vaccinated");
+        pause(time_delay);
+    end
+    disp("e")
 end % end while
 fprintf('Infection runtime: %.3f seconds\n', infection_time);
 end % end function

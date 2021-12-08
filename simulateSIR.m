@@ -141,13 +141,13 @@ while t ~= end_time % don't stop if end_time == 0
         recovered_index = find(population(:,1) == 3);
         dead_index = find(population(:,1) == 4);
         vaccinated_index = find(population(:,1) == 5);
-
-        scatter(population(suceptible_index, 2), population(suceptible_index, 3), 15, [0.3010 0.7450 0.9330], "filled");
+        
+        scatter(population(dead_index, 2), population(dead_index, 3), 15, "black", "filled");
         hold on
+        scatter(population(suceptible_index, 2), population(suceptible_index, 3), 15, [0.3010 0.7450 0.9330], "filled");
         scatter(population(exposed_index, 2), population(exposed_index, 3), 15, [0.8500 0.3250 0.0980], "filled");
         scatter(population(infected_index, 2), population(infected_index, 3), 15, "red", "filled");
-        scatter(population(recovered_index, 2), population(recovered_index, 3), 15, "magenta", "filled");
-        scatter(population(dead_index, 2), population(dead_index, 3), 15, "black", "filled");
+        scatter(population(recovered_index, 2), population(recovered_index, 3), 15, "green", "filled");
         scatter(population(vaccinated_index, 2), population(vaccinated_index, 3), 15, "blue", "filled");
         hold off
         legend("suceptible","exposed","infected","recovered","dead","vaccinated");

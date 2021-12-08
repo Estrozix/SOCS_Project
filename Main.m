@@ -3,18 +3,18 @@
 clear, clc, clf
 % TODO:
 
-% vaccinated status
-% move probability depends on illness
-% alpha increases with time 
-% Hospitalized status
-% dynamic/dependent parameters (mu,gamma) etc
-% add Exposed status
-% vaccine dosage
-% add age property
-% vacination rate, vaccination program, vaccination positivity 
-% vaccine decay  rate
-% vaccination percentage iable
-% animation ? (store position as function of time)
+% vaccinated status [X]
+% move probability depends on illness []
+% alpha increases with time []
+% Hospitalized status []
+% dynamic/dependent parameters (mu,gamma) etc []
+% add Exposed status [X]
+% vaccine dosage []
+% add age property []
+% vacination rate, vaccination program, vaccination positivity [] 
+% vaccine decay  rate []
+% vaccination percentage label []
+% animation [X]
 
 time = 3000;
 starttime = tic;
@@ -30,7 +30,7 @@ starttime = tic;
     end_time = time, ...
     vacc_interval = 100, ...
     inc_factor = 0.1, ...
-    show_scatter = true, ...
+    show_scatter = false, ...
     time_delay = 0.1);
 fprintf('Total time: %.3f seconds\n', toc(starttime));
 

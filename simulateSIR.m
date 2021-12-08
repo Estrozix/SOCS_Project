@@ -68,7 +68,7 @@ t = 1;
 infection_time = 0;
 while t ~= end_time % don't stop if end_time == 0
     % move step
-    will_move = rand(individuals,1) < move_probability & population(:,1) ~= 4;
+    will_move = rand(individuals,1) < move_probability & population(:,1) ~= Status.D;
     directions = [+1,0; -1,0; 0,+1; 0,-1];
     chosen_directions = directions(randi(4,individuals,1),:);
     population(:,2) = population(:,2) + will_move.*chosen_directions(:,1);

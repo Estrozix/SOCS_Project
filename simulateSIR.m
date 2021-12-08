@@ -1,5 +1,5 @@
 % runs at most end_time iterations. if end_time=0, only stop when disease is dead.
-function [S, I, R, D, V] = simulateSIR(options)
+function [S, I, A, R, D, V] = simulateSIR(options)
 arguments
     options.latticeN double = 100
     options.individuals double = 1000
@@ -14,6 +14,7 @@ arguments
     options.vacc_interval (1, 1) double
     options.inc_factor (1, 1) double
     options.show_scatter
+    options.rho_a (1, 1) double
 end
 %beta,gamma,d,mu,alpha,sigma,end_time
 % Simulation Parameters
@@ -31,15 +32,18 @@ end_time = options.end_time;
 vacc_interval = options.vacc_interval;
 inc_factor = options.inc_factor;
 show_scatter = options.show_scatter;
+rho_a = options.rho_a;
 
 % Initialize population
 % store (status,pos_x,pos_y,linear_index,vaccination time)
 population = zeros(individuals,5);
-% 1 = susceptible
-% 2 = infected
-% 3 = recovered
-% 4 = dead
-% 5 = vaccinated (immune)
+% S (0) %suceptible
+% E (1) %exposed
+% I (2) %infected (symptomatic)
+% A (3) %infected (asymptomatic)
+% R (4) %recovered
+% D (5) %dead
+% V (6) %vaccinated
 population(:,2:3) = randi([0,latticeN],individuals,2);
 population(:,1) = Status.S;
 population(1:initial_infected_no,1) = Status.I;
@@ -49,6 +53,7 @@ population(:, 5) = 0;
 % Initialize data
 S = zeros(1,end_time);
 I = zeros(1,end_time);
+A = zeros(1,end_time);
 R = zeros(1,end_time);
 D = zeros(1,end_time);
 V = zeros(1,end_time);
@@ -71,7 +76,7 @@ while t ~= end_time % don't stop if end_time == 0
 
     % infection step, almost certainly most of the computation time
     starttime = tic;
-    infected = find(population(:,1) == Status.I);
+    infected = find(population(:,1) == Status.I | population(:, 1) == Status.A);
     for i = 1:length(infected)
         if rand < infect_rate
             local_sus = population(:,1) == Status.S & population(:,4) == population(infected(i),4);
@@ -82,15 +87,21 @@ while t ~= end_time % don't stop if end_time == 0
 
     % exposed step
     exposed_condition = (rand(individuals, 1) < inc_factor & population(:, 1) == Status.E);
+    asymptomatic_condition = exposed_condition & (rand(individuals, 1) < rho_a);
+
+    % Temporarily set all symptomatic
     population(exposed_condition, 1) = Status.I;
+
+    % Set some of the symptomatic to asymptomatic
+    population(asymptomatic_condition, 1) = Status.A;
 
     % vaccinate step
     vaccination_condition =  (rand(individuals,1) < vaccination_rate & population(:,1) == Status.S & (((t - population(:, 5)) > vacc_interval) | population(:, 5) == 0));
     population(vaccination_condition,1) = Status.V;
     population(vaccination_condition,5) = t;
     
-    % recovery step
-    recover_condition = (rand(individuals,1) < recovery_rate & population(:,1) == Status.I);
+    % recovery step (both symptomatic and asymptomatic)
+    recover_condition = (rand(individuals,1) < recovery_rate & (population(:,1) == Status.I | population(:, 1) == Status.A));
     population(recover_condition,1) = Status.R;
 
     % death step
@@ -106,6 +117,7 @@ while t ~= end_time % don't stop if end_time == 0
     t = t + 1;
     S(t) = sum(population(:,1) == Status.S);
     I(t) = sum(population(:,1) == Status.I);
+    A(t) = sum(population(:,1) == Status.A);
     R(t) = sum(population(:,1) == Status.R);
     D(t) = sum(population(:,1) == Status.D);
     V(t) = sum(population(:,1) == Status.V);
@@ -114,6 +126,7 @@ while t ~= end_time % don't stop if end_time == 0
         if end_time > 0
             S((t+1):end) = S(t);
             I((t+1):end) = I(t);
+            A((t+1):end) = A(t);
             R((t+1):end) = R(t);
             D((t+1):end) = D(t);
             V((t+1):end) = V(t);

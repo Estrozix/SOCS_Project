@@ -42,7 +42,7 @@ population = zeros(individuals,5);
 % 3 = recovered
 % 4 = dead
 % 5 = vaccinated (immune)
-population(:,2:3) = randi([0,latticeN],individuals,2);
+population(:,2:3) = randi([1,latticeN],individuals,2);
 population(:,1) = Status.S;
 population(1:initial_infected_no,1) = Status.I;
 population(:, 5) = 0;
@@ -68,8 +68,8 @@ while t ~= end_time % don't stop if end_time == 0
     chosen_directions = directions(randi(4,individuals,1),:);
     population(:,2) = population(:,2) + will_move.*chosen_directions(:,1);
     population(:,3) = population(:,3) + will_move.*chosen_directions(:,2);
-    population(:,2:3) = mod(population(:,2:3), latticeN);
-    population(:,4) = population(:,2) + population(:,3)*latticeN;
+    population(:,2:3) = mod(population(:,2:3) - 1, latticeN) + 1;
+    population(:,4) = population(:,2) + (population(:,3) - 1) * latticeN;
 
     % infection step, almost certainly most of the computation time
     starttime = tic;
@@ -140,7 +140,7 @@ while t ~= end_time % don't stop if end_time == 0
         legend("suceptible","exposed","infected","recovered","dead","vaccinated");
         pause(time_delay);
     end
-    disp("e")
+    
 end % end while
 fprintf('Infection runtime: %.3f seconds\n', infection_time);
 end % end function

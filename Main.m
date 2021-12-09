@@ -3,7 +3,6 @@
 clear, clc, clf
 % TODO:
 
-
 % vaccinated status [X]
 % move probability depends on illness []
 % alpha increases with time []
@@ -42,7 +41,7 @@ plot(1:time,I)
 plot(1:time,A)
 plot(1:time,R)
 plot(1:time,D)
-%plot(1:time,V)
+plot(1:time,V)
 %plot(1:time,E)
-legend("Susceptible", "Infected", "Asymptomatic", "Recovered", "Dead")
+legend("Susceptible", "Infected", "Asymptomatic", "Recovered", "Dead",'v')
 

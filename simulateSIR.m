@@ -110,7 +110,7 @@ while t ~= end_time % don't stop if end_time == 0
 
 %     % infection step, almost certainly most of the computation time
 %             starttime = tic;
-%             infected = find(population(:,1) == Status.I);
+%             infected = find(population(:,1) == Status.I | population(:,1) == Status.A);
 %     
 %             for i = 1:length(infected)
 %                 if rand < infect_rate
@@ -165,7 +165,7 @@ while t ~= end_time % don't stop if end_time == 0
     recover_condition = (rand(individuals,1) < recovery_rate & (population(:,1) == Status.I | population(:, 1) == Status.A));
     population(recover_condition,1) = Status.R;
 
-    % death step
+    % death step (only sympomatic die)
     death_condition = (rand(individuals,1) < mortality_rate & population(:,1) == Status.I);
     population(death_condition,1) = Status.D;
 
@@ -183,6 +183,7 @@ while t ~= end_time % don't stop if end_time == 0
     D(t) = sum(population(:,1) == Status.D);
     V(t) = sum(population(:,1) == Status.V);
     E(t) = sum(population(:,1) == Status.E);
+
     % check for disease extinction
     if I(t) == 0 && A(t) == 0
         if end_time > 0

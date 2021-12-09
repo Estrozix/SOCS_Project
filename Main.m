@@ -7,9 +7,8 @@ clear, clc, clf
 % vaccinated status [X]
 % move probability depends on illness []
 % alpha increases with time []
-% Hospitalized status []
 % dynamic/dependent parameters (mu,gamma) etc []
-% add Exposed status [X]
+% add Exposed status [X]§
 % vaccine dosage []
 % add age property []
 % vacination rate, vaccination program, vaccination positivity [] 
@@ -43,7 +42,7 @@ plot(1:time,I)
 plot(1:time,A)
 plot(1:time,R)
 plot(1:time,D)
-plot(1:time,V)
-plot(1:time,E)
-legend("Susceptible", "Infected", "Asymptomatic", "Recovered", "Dead", "Vaccine Imm.")
+%plot(1:time,V)
+%plot(1:time,E)
+legend("Susceptible", "Infected", "Asymptomatic", "Recovered", "Dead")
 

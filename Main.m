@@ -8,7 +8,7 @@ clear, clc, clf
 % move probability depends on illness []
 % alpha increases with time []
 % dynamic/dependent parameters (mu,gamma) etc []
-% add Exposed status [X]§
+% add Exposed status [X]
 % vaccine dosage []
 % add age property []
 % vacination rate, vaccination program, vaccination positivity [] 

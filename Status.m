@@ -1,10 +1,11 @@
 classdef Status < double
     enumeration
-        S (0) 
-        E (1)
-        I (2)
-        R (3)
-        D (4)
-        V (5)
+        S (0) %suceptible
+        E (1) %exposed
+        I (2) %infected (symptomatic)
+        A (3) %infected (asymptomatic)
+        R (4) %recovered
+        D (5) %dead
+        V (6) %vaccinated
     end
 end

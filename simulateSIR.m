@@ -88,7 +88,8 @@ while t ~= end_time % don't stop if end_time == 0
     temporaryLindex = population(:,4);
     population(:,2) = population(:,2) + will_move.*chosen_directions(:,1);
     population(:,3) = population(:,3) + will_move.*chosen_directions(:,2);
-
+    population(:,2:3) = mod(population(:,2:3)-1, latticeN)+1;
+    population(:,4) = population(:,2) + (population(:,3)-1)*latticeN;
 
     for i = 1:individuals  % update latticeMatrix
         if will_move(i)
@@ -107,7 +108,7 @@ while t ~= end_time % don't stop if end_time == 0
 
 
 
-    % infection step, almost certainly most of the computation time
+%     % infection step, almost certainly most of the computation time
 %             starttime = tic;
 %             infected = find(population(:,1) == Status.I);
 %     
@@ -172,6 +173,7 @@ while t ~= end_time % don't stop if end_time == 0
     deimmun_condition = (rand(individuals,1) < deimmunization_rate & population(:,1) == Status.R);
     vacc_deimmun_condition = (rand(individuals,1) < vacc_deimmun_rate & population(:,1) == Status.V);
     population(deimmun_condition | vacc_deimmun_condition,1) = Status.S;
+
     % Update data
     t = t + 1;
     S(t) = sum(population(:,1) == Status.S);
@@ -182,7 +184,7 @@ while t ~= end_time % don't stop if end_time == 0
     V(t) = sum(population(:,1) == Status.V);
     E(t) = sum(population(:,1) == Status.E);
     % check for disease extinction
-    if I(t) == 0
+    if I(t) == 0 && A(t) == 0
         if end_time > 0
             S((t+1):end) = S(t);
             I((t+1):end) = I(t);

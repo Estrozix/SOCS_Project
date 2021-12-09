@@ -3,12 +3,12 @@
 clear, clc, clf
 % TODO:
 
+
 % vaccinated status [X]
 % move probability depends on illness []
 % alpha increases with time []
-% Hospitalized status []
 % dynamic/dependent parameters (mu,gamma) etc []
-% add Exposed status [X]
+% add Exposed status [X]§
 % vaccine dosage []
 % add age property []
 % vacination rate, vaccination program, vaccination positivity [] 
@@ -18,11 +18,11 @@ clear, clc, clf
 
 time = 3000;
 starttime = tic;
-[S, I, A, R, D, V] = simulateSIR(...
+[S, I, A, R, D, V, E] = simulateSIR(...
     beta = 0.8,...
     gamma = 0.01,...
     d = 1, ...
-    mu = 0.00005, ...
+    mu = 0.0005, ...
     alpha_nat = 0.01, ...
     alpha_vacc = 0.01, ...
     sigma = 0.001, ...
@@ -34,12 +34,15 @@ starttime = tic;
     time_delay = 0.1);
 fprintf('Total time: %.3f seconds\n', toc(starttime));
 
-figure
+
+
 plot(1:time,S)
 hold on
 plot(1:time,I)
 plot(1:time,A)
 plot(1:time,R)
 plot(1:time,D)
-plot(1:time,V)
-legend("Susceptible", "Infected", "Asymptomatic", "Recovered", "Dead", "Vaccine Imm.")
+%plot(1:time,V)
+%plot(1:time,E)
+legend("Susceptible", "Infected", "Asymptomatic", "Recovered", "Dead")
+

@@ -1,5 +1,5 @@
 % runs at most end_time iterations. if end_time=0, only stop when disease is dead.
-function [S, I, R, D, V] = simulateSIR(options)
+function [S, I, R, D, V, E, latticeMatrix] = simulateSIR(options)
 arguments
     options.latticeN double = 100
     options.individuals double = 1000
@@ -62,6 +62,7 @@ I = zeros(1,end_time);
 R = zeros(1,end_time);
 D = zeros(1,end_time);
 V = zeros(1,end_time);
+E = zeros(1,end_time);
 I(1) = initial_infected_no;
 S(1) = individuals-initial_infected_no;
 
@@ -98,20 +99,22 @@ while t ~= end_time % don't stop if end_time == 0
     end
 
 
-
     % infection step, almost certainly most of the computation time
-    %     starttime = tic;
-    %     infected = find(population(:,1) == Status.I);
-    %     for i = 1:length(infected)
-    %         if rand < infect_rate
-    %             local_sus = population(:,1) == Status.S & population(:,4) == population(infected(i),4);
-    %             population(local_sus,1) = Status.E;
-    %         end
-    %     end
-    %     infection_time = infection_time + toc(starttime);
+%             starttime = tic;
+%             infected = find(population(:,1) == Status.I);
+%     
+%             for i = 1:length(infected)
+%                 if rand < infect_rate
+%                     local_sus = population(:,1) == Status.S & population(:,4) == population(infected(i),4);
+%                     population(local_sus,1) = Status.E;
+%                 end
+%             end
+%             infection_time = infection_time + toc(starttime);
 
 
-    % improved infection step
+
+
+%     improved infection step
     starttime = tic;
     infected = find(population(:,1) == Status.I);
     for i = 1:length(infected)
@@ -119,8 +122,14 @@ while t ~= end_time % don't stop if end_time == 0
             q = infected(i);
             lindexInfected = population(q,4);
             local_indices = nonzeros(latticeMatrix(lindexInfected,:));
-            local_sus = population(local_indices,1) == Status.S;
-            population(local_sus,1) = Status.E;
+
+
+            for j = 1:length(local_indices)
+                if population(local_indices(j),1) == Status.S
+                    population(local_indices(j),1) = Status.E;
+                end
+            end
+
         end
     end
     infection_time = infection_time + toc(starttime);
@@ -156,6 +165,7 @@ while t ~= end_time % don't stop if end_time == 0
     R(t) = sum(population(:,1) == Status.R);
     D(t) = sum(population(:,1) == Status.D);
     V(t) = sum(population(:,1) == Status.V);
+    E(t) = sum(population(:,1) == Status.E);
     % check for disease extinction
     if I(t) == 0
         if end_time > 0
@@ -164,6 +174,7 @@ while t ~= end_time % don't stop if end_time == 0
             R((t+1):end) = R(t);
             D((t+1):end) = D(t);
             V((t+1):end) = V(t);
+            E((t+1):end) = E(t);
         end
         break;
     end

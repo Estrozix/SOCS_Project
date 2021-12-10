@@ -1,19 +1,7 @@
 % Main 
 
 clear, clc, clf
-% TODO:
 
-% vaccinated status [X]
-% move probability depends on illness []
-% alpha increases with time []
-% dynamic/dependent parameters (mu,gamma) etc []
-% add Exposed status [X]
-% vaccine dosage []
-% add age property []
-% vacination rate, vaccination program, vaccination positivity [] 
-% vaccine decay  rate []
-% vaccination percentage label []
-% animation [X]
 
 time = 1000;
 starttime = tic;

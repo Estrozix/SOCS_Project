@@ -30,6 +30,7 @@ population(asymptomatic_condition, 1) = Status.A;
 vaccination_condition =  (rand(individuals,1) < vaccination_rate & population(:,1) == Status.S & (((t - population(:, 5)) > vacc_interval) | population(:, 5) == 0));
 population(vaccination_condition,1) = Status.V;
 population(vaccination_condition,5) = t;
+population(vaccination_condition,6) = population(vaccination_condition,6) + 1;
 
 
 % Recovery step (both symptomatic and asymptomatic)

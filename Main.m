@@ -5,7 +5,7 @@ clear, clc, clf
 
 time = 1000;
 starttime = tic;
-[S, I, A, R, D, V, E, C] = simulateSIR(...
+[S, I, A, R, D, V, E, C, vacced, doses] = simulateSIR(...
     beta = 0.6,...
     gamma = 0.01,...
     d = 0.8, ...
@@ -22,7 +22,7 @@ starttime = tic;
 fprintf('Total time: %.3f seconds\n', toc(starttime));
 
 
-
+figure(69420);
 plot(1:time,S)
 hold on
 plot(1:time,I)
@@ -30,5 +30,7 @@ plot(1:time,A)
 plot(1:time,R)
 plot(1:time,D)
 plot(1:time,V)
+plot(1:time,vacced,'--');
+plot(1:time,doses,'--');
 %plot(1:time,E)
-legend("Susceptible", "Infected", "Asymptomatic", "Recovered", "Dead",'v')
+legend("Susceptible", "Infected", "Asymptomatic", "Recovered", "Dead",'Vaccine-immune','Vaccinated at least once', 'Total \# of doses');

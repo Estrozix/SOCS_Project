@@ -1,6 +1,6 @@
 % runs at most end_time iterations. if end_time=0, only stop when disease is dead.
 
-function [S, I, A, R, D, V, E, C] = simulateSIR(options)
+function [S, I, A, R, D, V, E, C, no_vacced_once, total_no_of_doses] = simulateSIR(options)
 
 
 arguments
@@ -40,7 +40,7 @@ rho_a = options.rho_a;
 time_delay = options.time_delay;
 
 % Initialize population
-% population: (status,pos_x,pos_y,linear_index,vaccination time)
+% population: (status,pos_x,pos_y,linear_index,vaccination time, # doses taken, times infected)
 population = zeros(individuals,7);
 population(:,1) = Status.S;
 population(1:initial_infected_no,1) = Status.I;
@@ -74,6 +74,9 @@ C = zeros(1,end_time);
 I(1) = initial_infected_no;
 S(1) = individuals-initial_infected_no;
 
+no_vacced_once = zeros(1,end_time);
+total_no_of_doses = zeros(1,end_time);
+
 
 % Main simulation
 t = 1;
@@ -106,6 +109,8 @@ while t ~= end_time % don't stop if end_time == 0
     V(t) = sum(population(:,1) == Status.V);
     E(t) = sum(population(:,1) == Status.E);
     C(t) = sum(population(:,7) > 0);
+    no_vacced_once(t) = sum(population(:,6) > 0);
+    total_no_of_doses(t) = sum(population(:,6));
 
     % Check for disease extinction
     if I(t) == 0 && A(t) == 0 && E(t) == 0
@@ -118,6 +123,8 @@ while t ~= end_time % don't stop if end_time == 0
             V((t+1):end) = V(t);
             E((t+1):end) = E(t);
             C((t+1):end) = C(t);
+            no_vacced_once((t+1):end) = no_vacced_once(t);
+            total_no_of_doses((t+1):end) = total_no_of_doses(t);
         end
         break;
     end

@@ -16,7 +16,7 @@ clear, clc, clf
 % vaccination percentage label []
 % animation [X]
 
-time = 3000;
+time = 1000;
 starttime = tic;
 [S, I, A, R, D, V, E] = simulateSIR(...
     beta = 0.8,...
@@ -45,4 +45,3 @@ plot(1:time,D)
 %plot(1:time,V)
 %plot(1:time,E)
 legend("Susceptible", "Infected", "Asymptomatic", "Recovered", "Dead")
-

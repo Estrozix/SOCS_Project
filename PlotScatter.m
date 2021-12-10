@@ -9,6 +9,7 @@ function PlotScatter(population, time_delay)
     
     dead_scatter = scatter(population(dead_index, 2), population(dead_index, 3), 15, "black", "filled");
     hold on
+    grid on
     suceptible_scatter = scatter(population(suceptible_index, 2), population(suceptible_index, 3), 15, [0.3010 0.7450 0.9330], "filled");
     exposed_scatter = scatter(population(exposed_index, 2), population(exposed_index, 3), 15, [0.8500 0.3250 0.0980], "filled");
     infected_scatter = scatter(population(infected_index, 2), population(infected_index, 3), 15, "red", "filled");
@@ -18,4 +19,5 @@ function PlotScatter(population, time_delay)
     hold off
     legend([dead_scatter,suceptible_scatter,exposed_scatter,infected_scatter,infected_asymptomatic_scatter,recovered_scatter,vaccinated_scatter],{"dead","suceptible","exposed","infected (symptomatic)","infected (asymptomatic)","recovered","vaccinated"});
     pause(time_delay);
+    
 end

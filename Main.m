@@ -34,3 +34,4 @@ plot(1:time,vacced,'--');
 plot(1:time,doses,'--');
 %plot(1:time,E)
 legend("Susceptible", "Infected", "Asymptomatic", "Recovered", "Dead",'Vaccine-immune','Vaccinated at least once', 'Total \# of doses');
+

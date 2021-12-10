@@ -4,7 +4,9 @@ function [population,latticeMatrix] = MovePopulation(population,...
     latticeMatrix, individuals, latticeN, move_probability)
 
 % Move population
-will_move = rand(individuals,1) < move_probability & population(:,1) ~= Status.D;
+will_move1 = rand(individuals,1) < move_probability & population(:,1) ~= Status.D & population(:,1) ~= Status.I;
+will_move2 = rand(individuals,1) < move_probability/10 & population(:,1) == Status.I;
+will_move = will_move1 | will_move2;
 directions = [+1,0; -1,0; 0,+1; 0,-1];
 chosen_directions = directions(randi(4,individuals,1),:);
 temporaryLindex = population(:,4);

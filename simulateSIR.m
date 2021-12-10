@@ -101,7 +101,7 @@ while t ~= end_time % don't stop if end_time == 0
     E(t) = sum(population(:,1) == Status.E);
 
     % Check for disease extinction
-    if I(t) == 0 && A(t) == 0
+    if I(t) == 0 && A(t) == 0 && E(t) == 0
         if end_time > 0
             S((t+1):end) = S(t);
             I((t+1):end) = I(t);

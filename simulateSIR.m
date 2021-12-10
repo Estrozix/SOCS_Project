@@ -138,7 +138,6 @@ while t ~= end_time % don't stop if end_time == 0
 
 end % end while
 
-disp(sum(population(:,5) ~= 0))
 fprintf('Infection runtime: %.3f seconds\n', infection_time);
 end % end function
 

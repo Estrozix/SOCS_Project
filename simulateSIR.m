@@ -41,7 +41,7 @@ time_delay = options.time_delay;
 
 % Initialize population
 % population: (status,pos_x,pos_y,linear_index,vaccination time)
-population = zeros(individuals,5);
+population = zeros(individuals,7);
 population(:,1) = Status.S;
 population(1:initial_infected_no,1) = Status.I;
 population(:,2:3) = randi([1,latticeN],individuals,2);

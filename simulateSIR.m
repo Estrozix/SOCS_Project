@@ -44,6 +44,10 @@ time_delay = options.time_delay;
 population = zeros(individuals,7);
 population(:,1) = Status.S;
 population(1:initial_infected_no,1) = Status.I;
+
+% Update infection times
+population(1:initial_infected_no,7) = 1;
+
 population(:,2:3) = randi([1,latticeN],individuals,2);
 population(:,4) = population(:,2) + (population(:,3)-1)*latticeN;
 population(:, 5) = 0;

@@ -2,6 +2,7 @@
 
 function [S, I, A, R, D, V, E] = simulateSIR(options)
 
+
 arguments
     options.latticeN double = 100
     options.individuals double = 1000

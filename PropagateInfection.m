@@ -15,6 +15,9 @@ function population = PropagateInfection(population, latticeMatrix, infect_rate)
             for j = 1:length(local_indices)
                 if population(local_indices(j),1) == Status.S
                     population(local_indices(j),1) = Status.E;
+
+                    % Update infection times
+                    population(local_indices(j),7) = population(local_indices(j),7) + 1;
                 end
             end
         end

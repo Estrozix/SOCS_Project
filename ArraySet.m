@@ -19,6 +19,7 @@ classdef ArraySet
                 prev_elements = obj.Elements;
                 obj.Elements = zeros(1,obj.Capacity);
                 obj.Elements(1:obj.Length) = prev_elements;
+                fprintf('Expanding capacity to %d elements.\n',obj.Capacity);
             end
             obj.Length = obj.Length + 1;
             obj.Elements(obj.Length) = element;

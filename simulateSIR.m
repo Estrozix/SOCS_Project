@@ -37,7 +37,7 @@ rho_a = options.rho_a;
 time_delay = options.time_delay;
 
 % Initialize population
-% store (status,pos_x,pos_y,linear_index,vaccination time)
+% store (status,pos_x,pos_y,linear_index,vaccination time,bucket_index)
 population = zeros(individuals,5);
 % S (0) %suceptible
 % E (1) %exposed
@@ -62,12 +62,26 @@ V = zeros(1,end_time);
 I(1) = initial_infected_no;
 S(1) = individuals-initial_infected_no;
 
+bucket_size = int32(100);
+buckets_per_dim = idivide(latticeN,bucket_size);
+assert(bucket_size*buckets_per_dim == latticeN);
+buckets(1:buckets_per_dim,1:buckets_per_dim) = ArraySet(1000);
+get_bucket_index = @(xpos,ypos) sub2ind([buckets_per_dim,buckets_per_dim], ...
+    idivide(xpos,bucket_size,'ceil'),idivide(ypos,bucket_size,'ceil'));
+
+for i = 1:individuals
+    bucket_idx = get_bucket_index(population(i,2),population(i,3));
+    buckets(bucket_idx) = buckets(bucket_idx).add(i);
+end
+disp(reshape([buckets.Length],buckets_per_dim,buckets_per_dim));
+
 
 % Main simulation
 t = 1;
 infection_time = 0;
 while t ~= end_time % don't stop if end_time == 0
     % move step
+    prev_bucket_idx = get_bucket_index(int32(population(:,2)),int32(population(:,3)));
     will_move = rand(individuals,1) < move_probability & population(:,1) ~= Status.D;
     directions = [+1,0; -1,0; 0,+1; 0,-1];
     chosen_directions = directions(randi(4,individuals,1),:);
@@ -75,17 +89,35 @@ while t ~= end_time % don't stop if end_time == 0
     population(:,3) = population(:,3) + will_move.*chosen_directions(:,2);
     population(:,2:3) = mod(population(:,2:3) - 1, latticeN) + 1;
     population(:,4) = population(:,2) + (population(:,3) - 1) * latticeN;
+    new_bucket_idx = get_bucket_index(int32(population(:,2)),int32(population(:,3)));
+
+    for i = 1:individuals
+        if prev_bucket_idx(i) ~= new_bucket_idx(i)
+            buckets(prev_bucket_idx(i)) = buckets(prev_bucket_idx(i)).remove(i);
+            buckets(new_bucket_idx(i)) = buckets(new_bucket_idx(i)).add(i);
+        end
+    end
 
     % infection step, almost certainly most of the computation time
     starttime = tic;
+%     infected = find(population(:,1) == Status.I | population(:, 1) == Status.A);
+%     for i = 1:length(infected)
+%         if rand < infect_rate
+%             local_sus = population(:,1) == Status.S & population(:,4) == population(infected(i),4);
+%             population(local_sus,1) = Status.E;
+%         end
+%     end
     infected = find(population(:,1) == Status.I | population(:, 1) == Status.A);
-    for i = 1:length(infected)
+    for i = infected.'
         if rand < infect_rate
-            local_sus = population(:,1) == Status.S & population(:,4) == population(infected(i),4);
-            population(local_sus,1) = Status.E;
+            bucket = buckets(new_bucket_idx(i));
+            candidates = bucket.Elements(1:bucket.Length);
+            local_sus = population(candidates,1) == Status.S & population(candidates,4) == population(i,4);
+            population(candidates(local_sus),1) = Status.E;
         end
     end
     infection_time = infection_time + toc(starttime);
+
 
     % exposed step
     exposed_condition = (rand(individuals, 1) < inc_factor & population(:, 1) == Status.E);
@@ -141,16 +173,24 @@ while t ~= end_time % don't stop if end_time == 0
         recovered_index = find(population(:,1) == 3);
         dead_index = find(population(:,1) == 4);
         vaccinated_index = find(population(:,1) == 5);
+
+        bucket = buckets(1);
+        bucket_index = bucket.Elements(1:bucket.Length);
         
-        scatter(population(dead_index, 2), population(dead_index, 3), 15, "black", "filled");
+        scatter(population(:,2), population(:,3), 15, 'black', 'filled');
         hold on
-        scatter(population(suceptible_index, 2), population(suceptible_index, 3), 15, [0.3010 0.7450 0.9330], "filled");
-        scatter(population(exposed_index, 2), population(exposed_index, 3), 15, [0.8500 0.3250 0.0980], "filled");
-        scatter(population(infected_index, 2), population(infected_index, 3), 15, "red", "filled");
-        scatter(population(recovered_index, 2), population(recovered_index, 3), 15, "green", "filled");
-        scatter(population(vaccinated_index, 2), population(vaccinated_index, 3), 15, "blue", "filled");
+        scatter(population(bucket_index, 2), population(bucket_index, 3), 15, 'red', 'filled');
         hold off
-        legend("suceptible","exposed","infected","recovered","dead","vaccinated");
+%         scatter(population(dead_index, 2), population(dead_index, 3), 15, "black", "filled");
+%         hold on
+%         scatter(population(suceptible_index, 2), population(suceptible_index, 3), 15, [0.3010 0.7450 0.9330], "filled");
+%         scatter(population(exposed_index, 2), population(exposed_index, 3), 15, [0.8500 0.3250 0.0980], "filled");
+%         scatter(population(infected_index, 2), population(infected_index, 3), 15, "red", "filled");
+%         scatter(population(recovered_index, 2), population(recovered_index, 3), 15, "green", "filled");
+%         scatter(population(vaccinated_index, 2), population(vaccinated_index, 3), 15, "blue", "filled");
+%         hold off
+        %legend("suceptible","exposed","infected","recovered","dead","vaccinated");
+        legend('plebs', 'bucket 1');
         pause(time_delay);
     end
     

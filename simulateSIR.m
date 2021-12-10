@@ -1,6 +1,6 @@
 % runs at most end_time iterations. if end_time=0, only stop when disease is dead.
 
-function [S, I, A, R, D, V, E] = simulateSIR(options)
+function [S, I, A, R, D, V, E, C] = simulateSIR(options)
 
 
 arguments
@@ -70,6 +70,7 @@ R = zeros(1,end_time);
 D = zeros(1,end_time);
 V = zeros(1,end_time);
 E = zeros(1,end_time);
+C = zeros(1,end_time);
 I(1) = initial_infected_no;
 S(1) = individuals-initial_infected_no;
 
@@ -104,6 +105,7 @@ while t ~= end_time % don't stop if end_time == 0
     D(t) = sum(population(:,1) == Status.D);
     V(t) = sum(population(:,1) == Status.V);
     E(t) = sum(population(:,1) == Status.E);
+    C(t) = sum(population(:,7) > 0);
 
     % Check for disease extinction
     if I(t) == 0 && A(t) == 0 && E(t) == 0
@@ -115,6 +117,7 @@ while t ~= end_time % don't stop if end_time == 0
             D((t+1):end) = D(t);
             V((t+1):end) = V(t);
             E((t+1):end) = E(t);
+            C((t+1):end) = C(t);
         end
         break;
     end

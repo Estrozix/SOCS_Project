@@ -1,11 +1,11 @@
 % runs at most end_time iterations. if end_time=0, only stop when disease is dead.
 
-function [S, I, A, R, D, V, E, C, Cm, no_vacced_once, total_no_of_doses] = simulateSIR(options)
+function [S, I, A, R, D, V, E, C, Cm, no_vacced_once, total_no_of_doses, true_end] = simulateSIR(options)
 
 
 arguments
     options.latticeN double = 100
-    options.individuals double = 1000
+    options.individuals double = 5000
     options.beta (1,1) double
     options.gamma (1,1) double
     options.d (1,1) double
@@ -52,6 +52,7 @@ population(:,2:3) = randi([1,latticeN],individuals,2);
 population(:,4) = population(:,2) + (population(:,3)-1)*latticeN;
 population(:, 5) = 0;
 
+true_end = 0;
 
 % Initialize lattice tensor
 latticeMatrix = zeros(latticeN^2,10);
@@ -71,6 +72,7 @@ D = zeros(1,end_time);
 V = zeros(1,end_time);
 E = zeros(1,end_time);
 C = zeros(1,end_time);
+Cm = zeros(1,end_time);
 I(1) = initial_infected_no;
 S(1) = individuals-initial_infected_no;
 
@@ -113,21 +115,26 @@ while t ~= end_time % don't stop if end_time == 0
     no_vacced_once(t) = sum(population(:,6) > 0);
     total_no_of_doses(t) = sum(population(:,6));
 
+    if mod(t, 24*30) == 0
+        disp("M: " + t/(24*30) + "/" + round(end_time/(24*30)))
+    end
+
     % Check for disease extinction
     if I(t) == 0 && A(t) == 0 && E(t) == 0
-        if end_time > 0
-            S((t+1):end) = S(t);
-            I((t+1):end) = I(t);
-            A((t+1):end) = A(t);
-            R((t+1):end) = R(t);
-            D((t+1):end) = D(t);
-            V((t+1):end) = V(t);
-            E((t+1):end) = E(t);
-            C((t+1):end) = C(t);
-            Cm((t+1):end) = Cm(t)
-            no_vacced_once((t+1):end) = no_vacced_once(t);
-            total_no_of_doses((t+1):end) = total_no_of_doses(t);
-        end
+%         if end_time > 0
+%             S((t+1):end) = S(t);
+%             I((t+1):end) = I(t);
+%             A((t+1):end) = A(t);
+%             R((t+1):end) = R(t);
+%             D((t+1):end) = D(t);
+%             V((t+1):end) = V(t);
+%             E((t+1):end) = E(t);
+%             C((t+1):end) = C(t);
+%             Cm((t+1):end) = Cm(t);
+%             no_vacced_once((t+1):end) = no_vacced_once(t);
+%             total_no_of_doses((t+1):end) = total_no_of_doses(t);
+%         end
+        true_end = t;
         break;
     end
 
@@ -136,6 +143,10 @@ while t ~= end_time % don't stop if end_time == 0
     end
 
 end % end while
+
+if true_end == 0
+    true_end = t;
+end
 
 fprintf('Infection runtime: %.3f seconds\n', infection_time);
 end % end function

@@ -138,6 +138,7 @@ while t ~= end_time % don't stop if end_time == 0
     end
 
 end % end while
+
 totalruntime = toc(totalstarttime);
 fprintf('Runtime: %.2f s, of which %.2f spent infecting\n', totalruntime, infection_time);
 end % end function

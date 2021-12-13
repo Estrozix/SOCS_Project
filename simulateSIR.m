@@ -135,7 +135,7 @@ while t ~= end_time % don't stop if end_time == 0
 
 end % end while
 
-fprintf('Infection runtime: %.3f seconds\n', infection_time);
+%fprintf('Infection runtime: %.3f seconds\n', infection_time);
 end % end function
 
 

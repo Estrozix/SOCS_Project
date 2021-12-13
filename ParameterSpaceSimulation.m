@@ -1,19 +1,21 @@
 % Parameter space
 clear,clc
 
-averages = 3;
+averages = 2;
 month = 24*30;
-time = 12*month*3;
+time = 12*month*4;
 
 % parameters to vary
-N = 2;
-betas = linspace(0.01,1,N);
-sigmas = linspace(0.0001,0.001,N);
-vaccineIntervals = linspace(1*month,24*month,N);
+N1 = 3;
+N2 = 24;
+N3 = 24;
+betas = linspace(0.029,0.031,N1);
+sigmas = linspace(1/(month),1/(24*month),N2);
+vaccineIntervals = linspace(1*month,24*month,N3);
 
 % Initialize output
 dataVariables = 4;
-parameterSpace = zeros(N,N,N,dataVariables);
+parameterSpace = zeros(N1,N2,N3,dataVariables);
 
 iSteps = length(betas);
 jSteps = length(sigmas);
@@ -53,5 +55,13 @@ parfor i = 1:iSteps
 end
 toc
 
+%% Plotting
 
+imagePlot = squeeze(parameterSpace(1,:,:,2));
+imagesc([sigmas(1),sigmas(end)],[vaccineIntervals(1),vaccineIntervals(end)],imagePlot)
+set(gca, 'YDir', 'normal');
+xlabel("\sigma")
+ylabel("interval")
+colormap jet
+colorbar
 

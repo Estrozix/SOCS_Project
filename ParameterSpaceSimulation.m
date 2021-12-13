@@ -6,7 +6,7 @@ month = 24*30;
 time = 12*month*3;
 
 % parameters to vary
-N = 3;
+N = 2;
 betas = linspace(0.01,1,N);
 sigmas = linspace(0.0001,0.001,N);
 vaccineIntervals = linspace(1*month,24*month,N);

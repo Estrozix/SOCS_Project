@@ -3,7 +3,6 @@
 
 function population = StatusUpdate(population,options,t)
 
-
 % Load in parameters
 individuals = options.individuals;
 recovery_rate = options.gamma;
@@ -27,11 +26,10 @@ population(exposed_condition, 1) = Status.I;
 population(asymptomatic_condition, 1) = Status.A;
 
 % Vaccinate step
-vaccination_condition =  (rand(individuals,1) < vaccination_rate & population(:,1) == Status.S & (((t - population(:, 5)) > vacc_interval) | population(:, 5) == 0));
+vaccination_condition =  (rand(individuals,1) < vaccination_rate & (population(:,1) ~= Status.I & population(:, 1) ~= Status.D) & (((t - population(:, 5)) > vacc_interval) | population(:, 5) == 0));
 population(vaccination_condition,1) = Status.V;
 population(vaccination_condition,5) = t;
 population(vaccination_condition,6) = population(vaccination_condition,6) + 1;
-
 
 % Recovery step (both symptomatic and asymptomatic)
 recover_condition = (rand(individuals,1) < recovery_rate & (population(:,1) == Status.I | population(:, 1) == Status.A));
@@ -45,7 +43,5 @@ population(death_condition,1) = Status.D;
 deimmun_condition = (rand(individuals,1) < deimmunization_rate & population(:,1) == Status.R);
 vacc_deimmun_condition = (rand(individuals,1) < vacc_deimmun_rate & population(:,1) == Status.V);
 population(deimmun_condition | vacc_deimmun_condition,1) = Status.S;
-
-
 
 end

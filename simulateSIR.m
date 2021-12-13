@@ -73,6 +73,7 @@ D = zeros(1,end_time);
 V = zeros(1,end_time);
 E = zeros(1,end_time);
 C = zeros(1,end_time);
+Cm = zeros(1,end_time);
 I(1) = initial_infected_no;
 S(1) = individuals-initial_infected_no;
 
@@ -82,7 +83,6 @@ total_no_of_doses = zeros(1,end_time);
 
 % Main simulation
 t = 1;
-infection_time = 0;
 while t ~= end_time % don't stop if end_time == 0
 
 
@@ -92,9 +92,7 @@ while t ~= end_time % don't stop if end_time == 0
 
 
     % Improved infection step
-    starttime = tic;
     population = PropagateInfection(population, latticeMatrix, infect_rate);
-    infection_time = infection_time + toc(starttime);
 
 
     % Update status
@@ -138,9 +136,6 @@ while t ~= end_time % don't stop if end_time == 0
     end
 
 end % end while
-
-totalruntime = toc(totalstarttime);
-fprintf('Runtime: %.2f s, of which %.2f spent infecting\n', totalruntime, infection_time);
 end % end function
 
 

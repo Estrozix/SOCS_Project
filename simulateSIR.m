@@ -1,6 +1,6 @@
 % runs at most end_time iterations. if end_time=0, only stop when disease is dead.
 
-function [S, I, A, R, D, V, E, C, no_vacced_once, total_no_of_doses] = simulateSIR(options)
+function [S, I, A, R, D, V, E, C, Cm, no_vacced_once, total_no_of_doses] = simulateSIR(options)
 
 
 arguments
@@ -111,6 +111,7 @@ while t ~= end_time % don't stop if end_time == 0
     V(t) = sum(population(:,1) == Status.V);
     E(t) = sum(population(:,1) == Status.E);
     C(t) = sum(population(:,7) > 0);
+    Cm(t) = sum(population(:, 7));
     no_vacced_once(t) = sum(population(:,6) > 0);
     total_no_of_doses(t) = sum(population(:,6));
 
@@ -125,6 +126,7 @@ while t ~= end_time % don't stop if end_time == 0
             V((t+1):end) = V(t);
             E((t+1):end) = E(t);
             C((t+1):end) = C(t);
+            Cm((t+1):end) = Cm(t)
             no_vacced_once((t+1):end) = no_vacced_once(t);
             total_no_of_doses((t+1):end) = total_no_of_doses(t);
         end

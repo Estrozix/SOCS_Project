@@ -3,7 +3,6 @@
 clear, clc, clf
 
 % Set parameters, vaccine interval every 5 months
-
 time = 365 * 24 * 5;
 starttime = tic;
 [S, I, A, R, D, V, E, C, Cm, vacced, doses, true_end] = simulateSIR(...

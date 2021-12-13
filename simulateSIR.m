@@ -21,6 +21,8 @@ arguments
     options.time_delay
 end
 
+totalstarttime = tic;
+
 % Simulation parameters
 latticeN = options.latticeN;
 individuals = options.individuals;
@@ -148,7 +150,9 @@ if true_end == 0
     true_end = t;
 end
 
-fprintf('Infection runtime: %.3f seconds\n', infection_time);
+totalruntime = toc(totalstarttime);
+fprintf('Runtime: %.2f s, of which %.2f spent infecting\n', totalruntime, infection_time);
+
 end % end function
 
 

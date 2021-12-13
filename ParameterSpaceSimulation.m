@@ -6,7 +6,7 @@ month = 24*30;
 time = 12*month*3;
 
 % parameters to vary
-N = 10;
+N = 3;
 betas = linspace(0.01,1,N);
 sigmas = linspace(0.0001,0.001,N);
 vaccineIntervals = linspace(1*month,24*month,N);
@@ -15,13 +15,17 @@ vaccineIntervals = linspace(1*month,24*month,N);
 dataVariables = 4;
 parameterSpace = zeros(N,N,N,dataVariables);
 
+iSteps = length(betas);
+jSteps = length(sigmas);
+kSteps = length(vaccineIntervals);
+
 tic
-parfor i = 1:length(betas)
-    for j = 1:length(sigmas)
-        for k = 1:length(vaccineIntervals)
+parfor i = 1:iSteps
+    for j = 1:jSteps
+        for k = 1:kSteps
             
-            tempData = zeros(runs,dataVariables);
-            for run = 1:averages
+            tempData = zeros(averages,dataVariables);
+            for runs = 1:averages
 
             [S, I, A, R, D, V, E, C, vacced, doses] = simulateSIR(...
                 show_scatter = false, ... % optional
@@ -39,7 +43,7 @@ parfor i = 1:length(betas)
                 vacc_interval = vaccineIntervals(k) ...
                 );
 
-            tempData(run,:) = [D(end),C(end),vacced(end),doses(end)]
+            tempData(runs,:) = [D(end),C(end),vacced(end),doses(end)]
             end
             
             parameterSpace(i,j,k,:) = mean(tempData);

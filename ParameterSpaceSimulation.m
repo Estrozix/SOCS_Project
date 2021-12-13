@@ -27,7 +27,7 @@ parfor i = 1:iSteps
             tempData = zeros(averages,dataVariables);
             for runs = 1:averages
 
-            [S, I, A, R, D, V, E, C, vacced, doses] = simulateSIR(...
+            [S, I, A, R, D, V, E, C, Cm, vacced, doses] = simulateSIR(...
                 show_scatter = false, ... % optional
                 time_delay = 0.1, ... % optional
                 end_time = time, ... % variable
@@ -43,7 +43,7 @@ parfor i = 1:iSteps
                 vacc_interval = vaccineIntervals(k) ...
                 );
 
-            tempData(runs,:) = [D(end),C(end),vacced(end),doses(end)]
+            tempData(runs,:) = [D(end),C(end),vacced(end),doses(end)];
             end
             
             parameterSpace(i,j,k,:) = mean(tempData);

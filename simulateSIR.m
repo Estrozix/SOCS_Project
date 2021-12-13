@@ -126,7 +126,7 @@ while t ~= end_time % don't stop if end_time == 0
             V((t+1):end) = V(t);
             E((t+1):end) = E(t);
             C((t+1):end) = C(t);
-            Cm((t+1):end) = Cm(t)
+            Cm((t+1):end) = Cm(t);
             no_vacced_once((t+1):end) = no_vacced_once(t);
             total_no_of_doses((t+1):end) = total_no_of_doses(t);
         end

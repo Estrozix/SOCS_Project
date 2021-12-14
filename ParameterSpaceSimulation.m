@@ -9,7 +9,7 @@ time = 12*month*4;
 N1 = 1;
 N2 = 24;
 N3 = 24;
-betas = 0.1;
+betas = 0.3;
 inverseSigma = linspace(1*month,24*month,N2);
 vaccineIntervals = linspace(1*month,24*month,N3);
 
@@ -58,12 +58,12 @@ toc
 
 %% Plotting
 % [S, I, A, R, D, V, E, C, Cm, nV, nVD]
-imagePlot = squeeze(parameterSpace(1,:,:,5));
-imagesc([inverseSigma(1),inverseSigma(end)]/month,[vaccineIntervals(1),vaccineIntervals(end)]/months,imagePlot.');
+imagePlot = squeeze(parameterSpace(1,:,:,1));
+imagesc([inverseSigma(1),inverseSigma(end)]/month,[vaccineIntervals(1),vaccineIntervals(end)]/month,imagePlot.');
 set(gca, 'YDir', 'normal');
-xlabel("$1/\sigma$ (months)");
+xlabel("Average vaccination delay $1/\sigma$ (months)");
 ylabel("Vaccination interval (months)");
-title(sprintf('Number of infected cases for $\\beta = %.2f$', betas));
+title(sprintf('Number of deaths for infection chance $\\beta = %.2f$', betas));
 colormap hot
 colorbar
 fprintf('Plotted.\n');

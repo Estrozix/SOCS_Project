@@ -1,24 +1,24 @@
 % Parameter space
 clear,clc
 
-averages = 10;
+averages = 5;
 month = 24*30;
 time = 12*month*4;
 
 % parameters to vary
 N1 = 1;
-N2 = 40;
-N3 = 40;
-betas = 0.03;
-sigmas = linspace(1/(month),1/(24*month),N2);
+N2 = 24;
+N3 = 24;
+betas = 0.1;
+inverseSigma = linspace(1*month,24*month,N2);
 vaccineIntervals = linspace(1*month,24*month,N3);
 
 % Initialize output
-dataVariables = 4;
+dataVariables = 5;
 parameterSpace = zeros(N1,N2,N3,dataVariables);
 
 iSteps = length(betas);
-jSteps = length(sigmas);
+jSteps = length(inverseSigma);
 kSteps = length(vaccineIntervals);
 
 tic
@@ -36,16 +36,16 @@ for i = 1:iSteps
                 gamma = 0.006,... % set
                 rho_a = 0.25,... % set
                 mu = 0.00006, ... % set
-                inc_factor = 0.08, ... % set
+                inc_factor = 1/(5*24), ... % set
                 d = 0.8, ... % set
                 alpha_vacc = -expm1(log(0.7)/(140*24)), ... % set (30 % loss after 20 weeks)
                 alpha_nat = -expm1(log(0.7)/(140*24)), ... % set (30 % loss after 20 weeks)
                 beta = betas(i),...
-                sigma = sigmas(j), ...
+                sigma = 1/inverseSigma(j), ...
                 vacc_interval = vaccineIntervals(k) ...
                 );
 
-            tempData(runs,:) = [D(end),C(end),vacced(end),doses(end)];
+            tempData(runs,:) = [D(end),C(end),Cm(end),vacced(end),doses(end)];
             end
             
             parameterSpace(i,j,k,:) = mean(tempData);
@@ -58,23 +58,24 @@ toc
 
 %% Plotting
 % [S, I, A, R, D, V, E, C, Cm, nV, nVD]
-imagePlot = squeeze(parameterSpace(1,:,:,2));
-imagesc([sigmas(1),sigmas(end)],[vaccineIntervals(1),vaccineIntervals(end)],imagePlot.');
+imagePlot = squeeze(parameterSpace(1,:,:,5));
+imagesc([inverseSigma(1),inverseSigma(end)]/month,[vaccineIntervals(1),vaccineIntervals(end)]/months,imagePlot.');
 set(gca, 'YDir', 'normal');
-xlabel("$\sigma$");
-ylabel("interval");
-title(sprintf('$\\beta = %.2f$', betas));
+xlabel("$1/\sigma$ (months)");
+ylabel("Vaccination interval (months)");
+title(sprintf('Number of infected cases for $\\beta = %.2f$', betas));
 colormap hot
 colorbar
+fprintf('Plotted.\n');
 
 %% testing
 fakeData = zeros(N1,N2,N2,dataVariables);
 for j = 1:jSteps
     for k = 1:jSteps
-        fakeData(1,j,k,2) = sigmas(j);
+        fakeData(1,j,k,2) = inverseSigma(j);
     end
 end
-imagesc([sigmas(1),sigmas(end)], [vaccineIntervals(1),vaccineIntervals(end)], squeeze(fakeData(1,:,:,2)).');
+imagesc([inverseSigma(1),inverseSigma(end)], [vaccineIntervals(1),vaccineIntervals(end)], squeeze(fakeData(1,:,:,2)).');
 set(gca, 'YDir', 'normal');
 xlabel("$\sigma$");
 ylabel("interval");

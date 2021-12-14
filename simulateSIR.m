@@ -15,9 +15,10 @@ arguments
     options.end_time (1,1) double
     options.vacc_interval (1, 1) double
     options.inc_factor (1, 1) double
-    options.show_scatter
+    options.show_scatter (1, 1) logical
     options.rho_a (1, 1) double
-    options.time_delay
+    options.time_delay (1, 1) double
+    options.print_benchmarks (1, 1) logical
 end
 
 % Simulation parameters
@@ -38,6 +39,7 @@ show_scatter = options.show_scatter;
 rho_a = options.rho_a;
 time_delay = options.time_delay;
 
+total_starttime = tic;
 
 % Initialize population
 % population: status(1),pos_x(2),pos_y(3),linear_index(4),vaccination time(5), # doses taken(6), times infected(7)
@@ -76,6 +78,7 @@ S(1) = individuals-initial_infected_no;
 
 
 % Main simulation
+infection_runtime = 0;
 t = 1;
 while t ~= end_time % don't stop if end_time == 0
 
@@ -86,8 +89,9 @@ while t ~= end_time % don't stop if end_time == 0
 
 
     % Improved infection step
+    infection_starttime = tic;
     population = PropagateInfection(population, latticeMatrix, infect_rate);
-
+    infection_runtime = infection_runtime + toc(infection_starttime);
 
     % Update status
     population = StatusUpdate(population,options,t);
@@ -130,6 +134,10 @@ while t ~= end_time % don't stop if end_time == 0
     end
 
 end % end while
+total_time = toc(total_starttime);
+if options.print_benchmarks
+    fprintf('Simulation took %.2f s of runtime, of which %.2f was spent infecting\n', total_time, infection_runtime);
+end
 end % end function
 
 

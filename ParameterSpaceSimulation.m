@@ -1,15 +1,15 @@
 % Parameter space
 clear,clc
 
-averages = 2;
+averages = 10;
 month = 24*30;
 time = 12*month*4;
 
 % parameters to vary
-N1 = 3;
-N2 = 24;
-N3 = 24;
-betas = linspace(0.029,0.031,N1);
+N1 = 1;
+N2 = 40;
+N3 = 40;
+betas = 0.03;
 sigmas = linspace(1/(month),1/(24*month),N2);
 vaccineIntervals = linspace(1*month,24*month,N3);
 
@@ -22,8 +22,8 @@ jSteps = length(sigmas);
 kSteps = length(vaccineIntervals);
 
 tic
-parfor i = 1:iSteps
-    for j = 1:jSteps
+for i = 1:iSteps
+    parfor j = 1:jSteps
         for k = 1:kSteps
             
             tempData = zeros(averages,dataVariables);
@@ -49,19 +49,35 @@ parfor i = 1:iSteps
             end
             
             parameterSpace(i,j,k,:) = mean(tempData);
-
+            
+            fprintf('i = %d, j = %d, k = %d\n', i, j, k);
         end
     end
 end
 toc
 
 %% Plotting
-
+% [S, I, A, R, D, V, E, C, Cm, nV, nVD]
 imagePlot = squeeze(parameterSpace(1,:,:,2));
-imagesc([sigmas(1),sigmas(end)],[vaccineIntervals(1),vaccineIntervals(end)],imagePlot)
+imagesc([sigmas(1),sigmas(end)],[vaccineIntervals(1),vaccineIntervals(end)],imagePlot.');
 set(gca, 'YDir', 'normal');
-xlabel("\sigma")
-ylabel("interval")
-colormap jet
+xlabel("$\sigma$");
+ylabel("interval");
+title(sprintf('$\\beta = %.2f$', betas));
+colormap hot
 colorbar
 
+%% testing
+fakeData = zeros(N1,N2,N2,dataVariables);
+for j = 1:jSteps
+    for k = 1:jSteps
+        fakeData(1,j,k,2) = sigmas(j);
+    end
+end
+imagesc([sigmas(1),sigmas(end)], [vaccineIntervals(1),vaccineIntervals(end)], squeeze(fakeData(1,:,:,2)).');
+set(gca, 'YDir', 'normal');
+xlabel("$\sigma$");
+ylabel("interval");
+title(sprintf('$\\beta = %.2f$', betas));
+colormap hot
+colorbar

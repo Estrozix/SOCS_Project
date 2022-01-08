@@ -1,15 +1,15 @@
 % Parameter space
 clear,clc
 
-averages = 5;
+averages = 3;
 month = 24*30;
 time = 12*month*4;
 
 % parameters to vary
-N1 = 1;
-N2 = 24;
-N3 = 24;
-betas = 0.3;
+N1 = 12;
+N2 = 1;
+N3 = 1;
+betas = linspace(1*month,24*month,N1);
 inverseSigma = linspace(1*month,24*month,N2);
 vaccineIntervals = linspace(1*month,24*month,N3);
 
